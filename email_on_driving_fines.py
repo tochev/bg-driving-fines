@@ -7,17 +7,41 @@ import typing
 import requests
 
 
+NO_OBLIGATIONS_RESPONSE = {
+    "obligationsData": [
+        {
+            "unitGroup": 1,
+            "errorNoDataFound": False,
+            "errorReadingData": False,
+            "obligations": []
+        },
+        {
+            "unitGroup": 2,
+            "errorNoDataFound": False,
+            "errorReadingData": False,
+            "obligations": []
+        }
+    ]
+}
+
+
 def get_fines_info(person_id: str, driving_license_id: str, return_error_as_text=True) -> typing.Union[bool, str]:
     """
     Return fines information or text indicating an error, `False` on no fines.
     """
     response = requests.get(
         'https://e-uslugi.mvr.bg/api/Obligations/AND',
-        params=dict(mode=1, obligedPersonIdent=person_id, drivingLicenceNumber=driving_license_id)
+        params=dict(
+            obligatedPersonType=1,  # physical person
+            additinalDataForObligatedPersonType=1,  # driving license
+            mode=1,
+            obligedPersonIdent=person_id,
+            drivingLicenceNumber=driving_license_id,
+        )
     )
     try:
         response.raise_for_status()
-        if response.json() != {"hasNonHandedSlip": False, "obligations": []}:
+        if response.json() != NO_OBLIGATIONS_RESPONSE:
             return response.text
         else:
             return False
@@ -59,4 +83,3 @@ if __name__ == '__main__':
         person_id=args.person_id, driving_license_id=args.driving_license_id,
         mail_to=args.mail_to, from_mail=args.from_mail,
     )
-

@@ -18,4 +18,4 @@ python3 email_on_driving_fines.py \
 python3 email_on_driving_fines.py -i YYMMDDXXXX -d 123456789 -t destination@example.com -f sender@example.com
 ```
 
-Keep in mind that invalid combination of ids will result in 404 error from the DMV service.
+Keep in mind that invalid combination of ids will result in `"errorNoDataFound": true` in the response from the DMV service.
